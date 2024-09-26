@@ -1,0 +1,1463 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-16T11:34:17Z"
+    generateName: eventing-controller-6f79b8fc4d-
+    labels:
+      app: eventing-controller
+      app.kubernetes.io/component: eventing-controller
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: 1.15.0
+      pod-template-hash: 6f79b8fc4d
+    name: eventing-controller-6f79b8fc4d-gfx44
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: eventing-controller-6f79b8fc4d
+      uid: ac33bb0e-2129-406e-bb16-21735cce82ce
+    resourceVersion: "172765430"
+    uid: 296f5446-a196-4377-8538-c6cc8dffc518
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app: eventing-controller
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: CONFIG_LOGGING_NAME
+        value: config-logging
+      - name: CONFIG_OBSERVABILITY_NAME
+        value: config-observability
+      - name: METRICS_DOMAIN
+        value: knative.dev/eventing
+      - name: APISERVER_RA_IMAGE
+        value: customregistry/knative.dev/eventing/cmd/apiserver_receive_adapter:v1.15
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      image: customregistry/knative.dev/eventing/cmd/controller:v1.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: probes
+          scheme: HTTP
+        initialDelaySeconds: 20
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: eventing-controller
+      ports:
+      - containerPort: 9090
+        name: metrics
+        protocol: TCP
+      - containerPort: 8008
+        name: profiling
+        protocol: TCP
+      - containerPort: 8080
+        name: probes
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readiness
+          port: probes
+          scheme: HTTP
+        initialDelaySeconds: 20
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000020000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-c64d7
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: false
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+    serviceAccount: eventing-controller
+    serviceAccountName: eventing-controller
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-c64d7
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-16T11:34:20Z"
+    generateName: eventing-webhook-55fbfc9785-
+    labels:
+      app: eventing-webhook
+      app.kubernetes.io/component: eventing-webhook
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: 1.15.0
+      pod-template-hash: 55fbfc9785
+      role: eventing-webhook
+    name: eventing-webhook-55fbfc9785-wrsx9
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: eventing-webhook-55fbfc9785
+      uid: 60c0fa65-6101-4245-8c88-139bd6c2e4a0
+    resourceVersion: "172765084"
+    uid: d0b77b70-a10f-4835-a95c-eccdd5273143
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app: eventing-webhook
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: CONFIG_LOGGING_NAME
+        value: config-logging
+      - name: METRICS_DOMAIN
+        value: knative.dev/eventing
+      - name: WEBHOOK_NAME
+        value: eventing-webhook
+      - name: WEBHOOK_PORT
+        value: "8443"
+      - name: SINK_BINDING_SELECTION_MODE
+        value: exclusion
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      image: customregistry/knative.dev/eventing/cmd/webhook:v1.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          httpHeaders:
+          - name: k-kubelet-probe
+            value: webhook
+          path: /
+          port: 8443
+          scheme: HTTPS
+        initialDelaySeconds: 120
+        periodSeconds: 1
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: eventing-webhook
+      ports:
+      - containerPort: 8443
+        name: https-webhook
+        protocol: TCP
+      - containerPort: 9090
+        name: metrics
+        protocol: TCP
+      - containerPort: 8008
+        name: profiling
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          httpHeaders:
+          - name: k-kubelet-probe
+            value: webhook
+          path: /
+          port: 8443
+          scheme: HTTPS
+        periodSeconds: 1
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 100m
+          memory: 200Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000020000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5k6wq
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: false
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+    serviceAccount: eventing-webhook
+    serviceAccountName: eventing-webhook
+    terminationGracePeriodSeconds: 300
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-5k6wq
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-16T11:34:27Z"
+    generateName: job-sink-f7f5fc677-
+    labels:
+      app.kubernetes.io/component: job-sink
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: 1.15.0
+      pod-template-hash: f7f5fc677
+      sinks.knative.dev/sink: job-sink
+    name: job-sink-f7f5fc677-h5r6m
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: job-sink-f7f5fc677
+      uid: 68cfa98d-22ad-4d37-b794-b0f2f57fb0b7
+    resourceVersion: "172765179"
+    uid: f2be92ee-a3a5-4c2a-9857-f7ac3a6869f5
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                sinks.knative.dev/sink: job-sink
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: CONTAINER_NAME
+        value: job-sink
+      - name: CONFIG_LOGGING_NAME
+        value: config-logging
+      - name: CONFIG_OBSERVABILITY_NAME
+        value: config-observability
+      - name: METRICS_DOMAIN
+        value: knative.dev/internal/eventing
+      - name: INGRESS_PORT
+        value: "8080"
+      - name: INGRESS_PORT_HTTPS
+        value: "8443"
+      image: customregistry/knative.dev/eventing/cmd/jobsink:v1.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 2
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: job-sink
+      ports:
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      - containerPort: 8443
+        name: https
+        protocol: TCP
+      - containerPort: 9092
+        name: metrics
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 8080
+          scheme: HTTP
+        periodSeconds: 2
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 400m
+          memory: 400Mi
+        requests:
+          cpu: 200m
+          memory: 200Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000020000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-67lbz
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: false
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+    serviceAccount: job-sink
+    serviceAccountName: job-sink
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-67lbz
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-16T11:37:27Z"
+    generateName: kafka-broker-receiver-598587dcfc-
+    labels:
+      app: kafka-broker-receiver
+      app.kubernetes.io/component: kafka-broker-receiver
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: d641892814ea8d0d70019201018d90da0a298012
+      pod-template-hash: 598587dcfc
+    name: kafka-broker-receiver-598587dcfc-rd475
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kafka-broker-receiver-598587dcfc
+      uid: 971f074b-14d8-49b1-b9cd-c10237c09b11
+    resourceVersion: "172768652"
+    uid: 0bde69ad-bc72-4f07-9498-15ddc39fd60d
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app: kafka-broker-receiver
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: SERVICE_NAME
+        value: kafka-broker-receiver
+      - name: SERVICE_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: INGRESS_PORT
+        value: "8080"
+      - name: INGRESS_TLS_PORT
+        value: "8443"
+      - name: PRODUCER_CONFIG_FILE_PATH
+        value: /etc/config/config-kafka-broker-producer.properties
+      - name: HTTPSERVER_CONFIG_FILE_PATH
+        value: /etc/config/config-kafka-broker-httpserver.properties
+      - name: DATA_PLANE_CONFIG_FILE_PATH
+        value: /etc/brokers-triggers/data
+      - name: LIVENESS_PROBE_PATH
+        value: /healthz
+      - name: READINESS_PROBE_PATH
+        value: /readyz
+      - name: METRICS_PATH
+        value: /metrics
+      - name: METRICS_PORT
+        value: "9090"
+      - name: METRICS_PUBLISH_QUANTILES
+        value: "false"
+      - name: METRICS_JVM_ENABLED
+        value: "false"
+      - name: CONFIG_TRACING_PATH
+        value: /etc/tracing
+      - name: CONFIG_FEATURES_PATH
+        value: /etc/features
+      - name: HTTP2_DISABLE
+        value: "true"
+      - name: WAIT_STARTUP_SECONDS
+        value: "8"
+      - name: JAVA_TOOL_OPTIONS
+        value: -XX:+CrashOnOutOfMemoryError
+      image: customregistry/knative.dev/knative-kafka-broker-receiver-loom:v1.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 3
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: kafka-broker-receiver
+      ports:
+      - containerPort: 9090
+        name: http-metrics
+        protocol: TCP
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      - containerPort: 8443
+        name: https
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readyz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 3
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 300m
+          memory: 900Mi
+        requests:
+          cpu: 200m
+          memory: 450Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/temination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /etc/config
+        name: config-kafka-broker-data-plane
+        readOnly: true
+      - mountPath: /etc/brokers-triggers
+        name: kafka-broker-brokers-triggers
+        readOnly: true
+      - mountPath: /tmp
+        name: cache
+      - mountPath: /etc/logging
+        name: kafka-broker-config-logging
+        readOnly: true
+      - mountPath: /etc/tracing
+        name: config-tracing
+        readOnly: true
+      - mountPath: /etc/features
+        name: config-features
+        readOnly: true
+      - mountPath: /etc/receiver-tls-secret
+        name: broker-receiver-tls-secret
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-jzdxq
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+      runAsUser: 1000021001
+    serviceAccount: knative-kafka-broker-data-plane
+    serviceAccountName: knative-kafka-broker-data-plane
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    topologySpreadConstraints:
+    - labelSelector:
+        matchLabels:
+          app: kafka-broker-receiver
+      maxSkew: 2
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+    volumes:
+    - configMap:
+        defaultMode: 420
+        name: kafka-broker-brokers-triggers
+      name: kafka-broker-brokers-triggers
+    - configMap:
+        defaultMode: 420
+        name: config-kafka-broker-data-plane
+      name: config-kafka-broker-data-plane
+    - emptyDir: {}
+      name: cache
+    - configMap:
+        defaultMode: 420
+        name: kafka-config-logging
+      name: kafka-broker-config-logging
+    - configMap:
+        defaultMode: 420
+        name: config-tracing
+      name: config-tracing
+    - configMap:
+        defaultMode: 420
+        name: config-features
+      name: config-features
+    - name: broker-receiver-tls-secret
+      secret:
+        defaultMode: 420
+        optional: true
+        secretName: kafka-broker-ingress-server-tls
+    - name: kube-api-access-jzdxq
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-25T10:25:05Z"
+    generateName: kafka-controller-57c88f749d-
+    labels:
+      app: kafka-controller
+      app.kubernetes.io/component: kafka-controller
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: d641892814ea8d0d70019201018d90da0a298012
+      pod-template-hash: 57c88f749d
+    name: kafka-controller-57c88f749d-w8nsg
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kafka-controller-57c88f749d
+      uid: bf0f13f9-1b01-44c0-b328-806fff22e209
+    resourceVersion: "186864403"
+    uid: d6301577-0761-4bd4-a51c-b3593deb1d91
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app: kafka-controller
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: BROKER_DATA_PLANE_CONFIG_MAP_NAMESPACE
+        value: clustername-kn-eventing
+      - name: CHANNEL_DATA_PLANE_CONFIG_MAP_NAMESPACE
+        value: clustername-kn-eventing
+      - name: SINK_DATA_PLANE_CONFIG_MAP_NAMESPACE
+        value: clustername-kn-eventing
+      - name: BROKER_CONTRACT_CONFIG_MAP_NAME
+        value: kafka-broker-brokers-triggers
+      - name: CHANNEL_CONTRACT_CONFIG_MAP_NAME
+        value: kafka-channel-channels-subscriptions
+      - name: SINK_CONTRACT_CONFIG_MAP_NAME
+        value: kafka-sink-sinks
+      - name: BROKER_DATA_PLANE_CONFIG_CONFIG_MAP_NAME
+        value: config-kafka-broker-data-plane
+      - name: SINK_DATA_PLANE_CONFIG_CONFIG_MAP_NAME
+        value: config-kafka-sink-data-plane
+      - name: CHANNEL_DATA_PLANE_CONFIG_CONFIG_MAP_NAME
+        value: config-kafka-channel-data-plane
+      - name: BROKER_CONTRACT_CONFIG_MAP_FORMAT
+        value: json
+      - name: CHANNEL_CONTRACT_CONFIG_MAP_FORMAT
+        value: json
+      - name: SINK_CONTRACT_CONFIG_MAP_FORMAT
+        value: json
+      - name: CONSUMER_CONTRACT_CONFIG_MAP_FORMAT
+        value: json
+      - name: BROKER_INGRESS_NAME
+        value: kafka-broker-ingress
+      - name: CHANNEL_INGRESS_NAME
+        value: kafka-channel-ingress
+      - name: SINK_INGRESS_NAME
+        value: kafka-sink-ingress
+      - name: BROKER_GENERAL_CONFIG_MAP_NAME
+        value: kafka-broker-config
+      - name: CHANNEL_GENERAL_CONFIG_MAP_NAME
+        value: kafka-channel-config
+      - name: SINK_GENERAL_CONFIG_MAP_NAME
+        value: kafka-broker-config
+      - name: BROKER_INGRESS_POD_PORT
+        value: "8080"
+      - name: CHANNEL_INGRESS_POD_PORT
+        value: "8080"
+      - name: SINK_INGRESS_POD_PORT
+        value: "8080"
+      - name: BROKER_INGRESS_POD_TLS_PORT
+        value: "8443"
+      - name: CHANNEL_INGRESS_POD_TLS_PORT
+        value: "8443"
+      - name: SINK_INGRESS_POD_TLS_PORT
+        value: "8443"
+      - name: BROKER_SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: CHANNEL_SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: SINK_SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: BROKER_DEFAULT_BACKOFF_DELAY_MS
+        value: "1000"
+      - name: CHANNEL_DEFAULT_BACKOFF_DELAY_MS
+        value: "1000"
+      - name: SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: AUTOSCALER_REFRESH_PERIOD
+        value: "100"
+      - name: POD_CAPACITY
+        value: "20"
+      - name: SCHEDULER_CONFIG
+        value: config-kafka-scheduler
+      - name: DESCHEDULER_CONFIG
+        value: config-kafka-descheduler
+      - name: AUTOSCALER_CONFIG
+        value: config-kafka-autoscaler
+      - name: CONFIG_LEADERELECTION_NAME
+        value: config-kafka-leader-election
+      - name: CONFIG_LOGGING_NAME
+        value: config-logging
+      - name: CONFIG_OBSERVABILITY_NAME
+        value: config-observability
+      - name: METRICS_DOMAIN
+        value: knative.dev/eventing
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      image: customregistry/knative.dev/eventing-kafka-broker/control-plane/cmd/kafka-controller:v1.15.4
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: probes
+          scheme: HTTP
+        initialDelaySeconds: 20
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: controller
+      ports:
+      - containerPort: 9090
+        name: metrics
+        protocol: TCP
+      - containerPort: 8080
+        name: probes
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: probes
+          scheme: HTTP
+        initialDelaySeconds: 20
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsUser: 1000020000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/temination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5vkmq
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+      runAsNonRoot: true
+    serviceAccount: kafka-controller
+    serviceAccountName: kafka-controller
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    topologySpreadConstraints:
+    - labelSelector:
+        matchLabels:
+          app: kafka-controller
+      maxSkew: 2
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+    volumes:
+    - name: kube-api-access-5vkmq
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-16T11:37:45Z"
+    generateName: kafka-sink-receiver-7cc9dcddd5-
+    labels:
+      app: kafka-sink-receiver
+      app.kubernetes.io/component: kafka-sink-receiver
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: d641892814ea8d0d70019201018d90da0a298012
+      pod-template-hash: 7cc9dcddd5
+    name: kafka-sink-receiver-7cc9dcddd5-gh4vs
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kafka-sink-receiver-7cc9dcddd5
+      uid: b415cfc1-0e56-45e8-bed8-b11b4e5b409d
+    resourceVersion: "172768894"
+    uid: 0a29fb04-48fb-4fe7-bf3b-639ef560138f
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app: kafka-sink-receiver
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: SERVICE_NAME
+        value: kafka-sink-receiver
+      - name: SERVICE_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: INGRESS_PORT
+        value: "8080"
+      - name: INGRESS_TLS_PORT
+        value: "8443"
+      - name: PRODUCER_CONFIG_FILE_PATH
+        value: /etc/config/config-kafka-sink-producer.properties
+      - name: HTTPSERVER_CONFIG_FILE_PATH
+        value: /etc/config/config-kafka-sink-httpserver.properties
+      - name: DATA_PLANE_CONFIG_FILE_PATH
+        value: /etc/sinks/data
+      - name: LIVENESS_PROBE_PATH
+        value: /healthz
+      - name: READINESS_PROBE_PATH
+        value: /readyz
+      - name: METRICS_PATH
+        value: /metrics
+      - name: METRICS_PORT
+        value: "9090"
+      - name: METRICS_PUBLISH_QUANTILES
+        value: "false"
+      - name: METRICS_JVM_ENABLED
+        value: "false"
+      - name: CONFIG_TRACING_PATH
+        value: /etc/tracing
+      - name: CONFIG_FEATURES_PATH
+        value: /etc/features
+      - name: HTTP2_DISABLE
+        value: "true"
+      - name: WAIT_STARTUP_SECONDS
+        value: "8"
+      - name: JAVA_TOOL_OPTIONS
+        value: -XX:+CrashOnOutOfMemoryError
+      image: customregistry/knative.dev/knative-kafka-broker-receiver-loom:v1.15
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 3
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: kafka-sink-receiver
+      ports:
+      - containerPort: 9090
+        name: http-metrics
+        protocol: TCP
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      - containerPort: 8443
+        name: https
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readyz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 3
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 300m
+          memory: 900Mi
+        requests:
+          cpu: 200m
+          memory: 450Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/temination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /etc/config
+        name: config-kafka-sink-data-plane
+        readOnly: true
+      - mountPath: /etc/sinks
+        name: kafka-sink-sinks
+        readOnly: true
+      - mountPath: /tmp
+        name: cache
+      - mountPath: /etc/logging
+        name: kafka-sink-config-logging
+        readOnly: true
+      - mountPath: /etc/tracing
+        name: config-tracing
+        readOnly: true
+      - mountPath: /etc/features
+        name: config-features
+        readOnly: true
+      - mountPath: /etc/receiver-tls-secret
+        name: sink-receiver-tls-secret
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-7zp25
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+      runAsUser: 1000021001
+    serviceAccount: knative-kafka-sink-data-plane
+    serviceAccountName: knative-kafka-sink-data-plane
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    topologySpreadConstraints:
+    - labelSelector:
+        matchLabels:
+          app: kafka-sink-receiver
+      maxSkew: 2
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+    volumes:
+    - configMap:
+        defaultMode: 420
+        name: kafka-sink-sinks
+      name: kafka-sink-sinks
+    - configMap:
+        defaultMode: 420
+        name: config-kafka-sink-data-plane
+      name: config-kafka-sink-data-plane
+    - emptyDir: {}
+      name: cache
+    - configMap:
+        defaultMode: 420
+        name: kafka-config-logging
+      name: kafka-sink-config-logging
+    - configMap:
+        defaultMode: 420
+        name: config-tracing
+      name: config-tracing
+    - configMap:
+        defaultMode: 420
+        name: config-features
+      name: config-features
+    - name: sink-receiver-tls-secret
+      secret:
+        defaultMode: 420
+        optional: true
+        secretName: kafka-sink-ingress-server-tls
+    - name: kube-api-access-7zp25
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-25T10:25:32Z"
+    generateName: kafka-webhook-eventing-55d976bcd6-
+    labels:
+      app: kafka-webhook-eventing
+      app.kubernetes.io/component: kafka-webhook-eventing
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: d641892814ea8d0d70019201018d90da0a298012
+      pod-template-hash: 55d976bcd6
+    name: kafka-webhook-eventing-55d976bcd6-7zgwm
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kafka-webhook-eventing-55d976bcd6
+      uid: 55c5f869-aab3-49be-8203-4dd5799761a8
+    resourceVersion: "186864378"
+    uid: bf74fb93-a0f4-416b-ab4f-3caed5da83f7
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app: kafka-webhook-eventing
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: CONFIG_LEADERELECTION_NAME
+        value: config-kafka-leader-election
+      - name: CONFIG_LOGGING_NAME
+        value: config-logging
+      - name: METRICS_DOMAIN
+        value: knative.dev/eventing
+      - name: WEBHOOK_NAME
+        value: kafka-webhook-eventing
+      - name: WEBHOOK_PORT
+        value: "8443"
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      image: customregistry/knative.dev/eventing-kafka-broker/control-plane/cmd/webhook-kafka:v1.15.4
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          httpHeaders:
+          - name: k-kubelet-probe
+            value: webhook
+          path: /
+          port: 8443
+          scheme: HTTPS
+        initialDelaySeconds: 20
+        periodSeconds: 1
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: kafka-webhook-eventing
+      ports:
+      - containerPort: 8443
+        name: https-webhook
+        protocol: TCP
+      - containerPort: 9090
+        name: metrics
+        protocol: TCP
+      - containerPort: 8008
+        name: profiling
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          httpHeaders:
+          - name: k-kubelet-probe
+            value: webhook
+          path: /
+          port: 8443
+          scheme: HTTPS
+        periodSeconds: 1
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 200m
+          memory: 200Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsUser: 1000020000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-hzcsn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+      runAsNonRoot: true
+    serviceAccount: kafka-webhook-eventing
+    serviceAccountName: kafka-webhook-eventing
+    terminationGracePeriodSeconds: 300
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-hzcsn
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2024-09-16T11:37:58Z"
+    generateName: pingsource-mt-adapter-677749cf55-
+    labels:
+      app.kubernetes.io/component: pingsource-mt-adapter
+      app.kubernetes.io/name: knative-eventing
+      app.kubernetes.io/version: 1.15.0
+      eventing.knative.dev/source: ping-source-controller
+      pod-template-hash: 677749cf55
+      sources.knative.dev/role: adapter
+    name: pingsource-mt-adapter-677749cf55-9lm6z
+    namespace: clustername-kn-eventing
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: pingsource-mt-adapter-677749cf55
+      uid: edd50478-e7b9-4419-a3c3-d4ce8d7e8265
+    resourceVersion: "172768941"
+    uid: 3e602d39-0e35-4b02-a726-430cae831e57
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                eventing.knative.dev/source: ping-source-controller
+                sources.knative.dev/role: adapter
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - env:
+      - name: SYSTEM_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: K_METRICS_CONFIG
+      - name: K_LOGGING_CONFIG
+      - name: K_LEADER_ELECTION_CONFIG
+      - name: K_NO_SHUTDOWN_AFTER
+      - name: K_SINK_TIMEOUT
+        value: "-1"
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      image: customregistry/knative.dev/eventing/cmd/mtping:v1.15
+      imagePullPolicy: IfNotPresent
+      name: dispatcher
+      ports:
+      - containerPort: 9090
+        name: metrics
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 250m
+          memory: 200Mi
+        requests:
+          cpu: 125m
+          memory: 100Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000020000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-dh6rk
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: false
+    imagePullSecrets:
+    - name: customregistry-pull-secret
+    nodeName: nodename1
+    nodeSelector:
+      region: region-clustername-001
+      type: worker
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000020000
+    serviceAccount: pingsource-mt-adapter
+    serviceAccountName: pingsource-mt-adapter
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-dh6rk
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
